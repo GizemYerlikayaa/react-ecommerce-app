@@ -1,9 +1,16 @@
 {
   "users": [
     {
-      "id": "d724",
-      "username": "sdfsdf",
-      "password": "sdfsdfsdf"
+      "id": "993008",
+      "username": "gizem",
+      "password": "1",
+      "balance": 1000
+    },
+    {
+      "id": "264323",
+      "username": "gizems",
+      "password": "123",
+      "balance": 1000
     }
   ]
 }

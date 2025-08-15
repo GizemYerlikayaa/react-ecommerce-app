@@ -1,5 +1,12 @@
 body {
   margin: 0;
   padding: 0;
+  background-image: url("./images/+.jpeg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: Arial, sans-serif;
 }
+
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");

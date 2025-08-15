@@ -9,12 +9,65 @@ import { height, spacing } from "@mui/system";
 import { useFormik } from "formik";
 import { RegisterPageSchema } from "../schemas/RegisterPageSchema";
 import loginPageService from "../services/LoginPageService";
+import { useDispatch } from "react-redux";
+import { setCurrentUser, setLoading } from "../redux/appSlice";
+import type { UserType } from "../types/Types";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
+interface CheckUserType {
+  result: boolean;
+  currentUser: UserType | null;
+}
 
 function LoginPage() {
-  const submit = (values: any, action: any) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const checkUser = (
+    userList: UserType[],
+    username: string,
+    password: string
+  ): CheckUserType => {
+    const response: CheckUserType = { result: false, currentUser: null };
+    userList.forEach((user: UserType) => {
+      if (user.username === username && user.password === password) {
+        response.result = true;
+        response.currentUser = user;
+      }
+    });
+
+    return response;
+  };
+
+  const submit = async (values: any, action: any) => {
     try {
-      loginPageService.login();
-    } catch (error) {}
+      dispatch(setLoading(true));
+      const response: UserType[] = await loginPageService.login();
+      if (response) {
+        const checkUserResponse: CheckUserType = checkUser(
+          response,
+          values.username,
+          values.password
+        );
+        if (checkUserResponse.result && checkUserResponse.currentUser) {
+          // kullanıcı adı şifre doğru
+          dispatch(setCurrentUser(checkUserResponse.currentUser));
+          localStorage.setItem(
+            "currentUser",
+            JSON.stringify(checkUserResponse.currentUser)
+          );
+          navigate("/");
+        } else {
+          // kullanıcı adı şifre yanlış
+          toast.error("Kullanıcı Adı Veya Şifre Hatalı");
+        }
+      }
+    } catch (error) {
+      toast.error("Giriş Yapılırken Bir Hata Oluştu" + error);
+    } finally {
+      dispatch(setLoading(false));
+    }
   };
 
   const clear = () => {
