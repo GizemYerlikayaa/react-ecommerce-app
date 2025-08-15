@@ -30,6 +30,7 @@ function ProductCard(props: ProductCardProps) {
         overflow: "hidden", // taşmaları engelle
         transition: "box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out",
         "&:hover": {
+          backgroundColor: "#f7bdeaa6", // hover arka plan rengi
           boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
           transform: "translateY(-5px)", // hafif yukarı kalkma efekti
         },
