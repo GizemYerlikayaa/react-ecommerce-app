@@ -10,8 +10,12 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDispatch } from "react-redux";
-import { setCurrentUser } from "../redux/appSlice";
+import { filterProduct, setCurrentUser, setProducts } from "../redux/appSlice";
 import { toast } from "react-toastify";
+import productService from "../services/ProductService";
+import type { ProductType } from "../types/Types";
+import { FaShoppingBasket } from "react-icons/fa";
+import Badge from "@mui/material/Badge";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -22,6 +26,19 @@ function Navbar() {
     dispatch(setCurrentUser(null));
     navigate("/login");
     toast.success("Başarıyla Çıkış Yapıldı");
+  };
+
+  const handleFilter = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (e.target.value) {
+        dispatch(filterProduct(e.target.value));
+      } else {
+        const products: ProductType[] = await productService.getAllProducts();
+        dispatch(setProducts(products));
+      }
+    } catch (error) {
+      toast.error("Filtreleme Yaparken Bir Hata Oluştu." + error);
+    }
   };
 
   return (
@@ -51,6 +68,9 @@ function Navbar() {
           }}
         >
           <TextField
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleFilter(e)
+            }
             sx={{
               width: "300px",
               "& .MuiInputBase-input": {
@@ -82,6 +102,28 @@ function Navbar() {
             variant="outlined"
           />
         </Box>
+        <Badge
+          color="default"
+          badgeContent={4}
+          sx={{
+            "& .MuiBadge-badge": {
+              backgroundColor: "#a27bff", // istediğin mor tonu
+              color: "black",
+              fontWeight: "600",
+              right: 15,
+              top: 5,
+            },
+          }}
+        >
+          <FaShoppingBasket
+            style={{
+              fontSize: "30px",
+              color: "black",
+              margin: "0px 25px",
+              cursor: "pointer",
+            }}
+          />
+        </Badge>
 
         {/* Sağ: Çıkış butonu */}
         <Button

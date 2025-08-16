@@ -6,6 +6,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import type { ProductType } from "../types/Types";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   product: ProductType;
@@ -14,6 +15,7 @@ interface ProductCardProps {
 function ProductCard(props: ProductCardProps) {
   const { id, title, price, description, category, image, rating } =
     props.product;
+  const navigate = useNavigate();
   return (
     <Card
       sx={{
@@ -64,6 +66,7 @@ function ProductCard(props: ProductCardProps) {
       </div>
       <CardActions>
         <Button
+          onClick={() => navigate("/product-detail/" + id)}
           size="large"
           variant="contained"
           sx={{

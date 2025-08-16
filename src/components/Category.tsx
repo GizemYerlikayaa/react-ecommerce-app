@@ -4,8 +4,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import categoryService from "../services/CategoryService";
 import { useDispatch } from "react-redux";
-import { setLoading } from "../redux/appSlice";
+import { setLoading, setProducts } from "../redux/appSlice";
 import { toast } from "react-toastify";
+import productService from "../services/ProductService";
+import type { ProductType } from "../types/Types";
 
 function Category() {
   const dispatch = useDispatch();
@@ -17,6 +19,34 @@ function Category() {
       setCategories(categories);
     } catch (error) {
       toast.error("Kategori Bulunamadı" + error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const handleCategory = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    categoryName: string
+  ) => {
+    try {
+      dispatch(setLoading(true));
+      if (e.target.checked) {
+        //kategoriye göre ürünleri getir
+        const products: ProductType[] =
+          await categoryService.getProductsByCategoryName(categoryName);
+        console.log("Kategori ürünleri:", products);
+        console.log("İlk ürün image:", products[0]?.image);
+        dispatch(setProducts(products));
+        console.log(products);
+      } else {
+        //ekranda bütün ürünleri listele
+        const products: ProductType[] = await productService.getAllProducts();
+        dispatch(setProducts(products));
+      }
+    } catch (error) {
+      toast.error(
+        "Kategoriye Göre Ürünler Listelenirken Bir Hata Oluştu." + error
+      );
     } finally {
       dispatch(setLoading(false));
     }
@@ -47,6 +77,9 @@ function Category() {
               key={index}
               control={
                 <Checkbox
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleCategory(e, category)
+                  }
                   sx={{
                     color: "#97a7ff",
                     "&.Mui-checked": {
