@@ -27,8 +27,9 @@ function BasketDetails() {
     dispatch(removeProductFromBasket(productId));
   };
   const buy = () => {
-    const total = Number(totalAmount);
-    const balance = Number(currentUser?.balance || 0);
+    // kuruş cinsinden integer hesapla
+    const total = Math.round(totalAmount * 100);
+    const balance = Math.round((currentUser?.balance || 0) * 100);
 
     if (balance < total) {
       toast.warn("Yetersiz Bakiye !");
@@ -36,7 +37,7 @@ function BasketDetails() {
     }
 
     if (currentUser) {
-      const remainingBalance = balance - total;
+      const remainingBalance = (balance - total) / 100; // tekrar float'a çevir
       const payload: UserType = { ...currentUser, balance: remainingBalance };
       dispatch(updateBalance(payload));
       dispatch(setBasket([]));
@@ -56,17 +57,38 @@ function BasketDetails() {
         sx={{ width: "200px" }}
         onClose={closeDrawer}
       >
-        <div style={{ backgroundColor: "#fdaff99c", height: "61px" }}>
+        {/* Logo altına bakiye göstergesi */}
+        <div
+          style={{
+            backgroundColor: "#fdaff99c",
+            height: "61px",
+            padding: "10px 30px",
+          }}
+        >
           <img
             src={LogoIcon}
-            style={{
-              width: "150px",
-              cursor: "pointer",
-              marginBottom: "15px",
-            }}
+            style={{ width: "150px", cursor: "pointer", marginBottom: "5px" }}
             alt="Logo"
           />
+          <div
+            style={{
+              fontSize: "18px",
+              fontWeight: "bold",
+              fontFamily: "Poppins",
+              color: "#333",
+            }}
+          >
+            Mevcut Bakiye: {currentUser?.balance?.toFixed(2)} $
+          </div>
         </div>
+
+        {/* Sepet boşsa mesaj */}
+        {basket && basket.length === 0 && (
+          <div style={{ padding: "20px", fontFamily: "Poppins" }}>
+            Sepetiniz boş
+          </div>
+        )}
+
         {basket &&
           basket.map((product: ProductType) => (
             <>
