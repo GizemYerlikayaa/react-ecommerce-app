@@ -9,17 +9,25 @@ import { useNavigate } from "react-router-dom";
 import InputAdornment from "@mui/material/InputAdornment";
 import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
-import { useDispatch } from "react-redux";
-import { filterProduct, setCurrentUser, setProducts } from "../redux/appSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  filterProduct,
+  setCurrentUser,
+  setDrawer,
+  setProducts,
+} from "../redux/appSlice";
 import { toast } from "react-toastify";
 import productService from "../services/ProductService";
 import type { ProductType } from "../types/Types";
 import { FaShoppingBasket } from "react-icons/fa";
 import Badge from "@mui/material/Badge";
+import type { RootState } from "../redux/store";
 
 function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { basket } = useSelector((state: RootState) => state.basket);
 
   const logout = () => {
     localStorage.removeItem("currentUser");
@@ -39,6 +47,10 @@ function Navbar() {
     } catch (error) {
       toast.error("Filtreleme Yaparken Bir Hata Oluştu." + error);
     }
+  };
+
+  const openDrawer = () => {
+    dispatch(setDrawer(true));
   };
 
   return (
@@ -103,8 +115,9 @@ function Navbar() {
           />
         </Box>
         <Badge
+          onClick={openDrawer}
           color="default"
-          badgeContent={4}
+          badgeContent={basket.length}
           sx={{
             "& .MuiBadge-badge": {
               backgroundColor: "#a27bff", // istediğin mor tonu
@@ -112,6 +125,7 @@ function Navbar() {
               fontWeight: "600",
               right: 15,
               top: 5,
+              cursor: "pointer",
             },
           }}
         >

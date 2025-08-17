@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import productService from "../services/ProductService";
 import type { ProductType } from "../types/Types";
 import Button from "@mui/material/Button";
+import { addProductToBasket } from "../redux/basketSlice";
 
 function ProductDetail() {
   const { productId } = useParams();
@@ -28,6 +29,18 @@ function ProductDetail() {
       dispatch(setLoading(false));
     }
   };
+
+  const addBasket = () => {
+    if (product) {
+      const payload: ProductType = {
+        ...product,
+        count: count,
+      };
+      dispatch(addProductToBasket(payload));
+      toast.success("Ürün Sepete Eklendi.");
+    }
+  };
+
   useEffect(() => {
     getProductById(Number(productId));
   }, []);
@@ -119,6 +132,7 @@ function ProductDetail() {
               </div>
               <div style={{ marginTop: "25px" }}>
                 <Button
+                  onClick={addBasket}
                   variant="contained"
                   sx={{
                     px: 4,
